@@ -31,9 +31,9 @@ const Navbar = () => {
 
   return (
     <div className="w-full">
-      <header className="fixed inset-x-0 top-0 z-30 bg-violet-600/80 py-1 shadow-lg backdrop-blur-lg border-gray-100">
-        <div className="px-4">
-          <div className="flex items-center justify-between">
+      <header className="fixed  inset-x-0 top-0 z-30 bg-violet-600/80 py-1 shadow-lg backdrop-blur-lg border-gray-100">
+        <div className="px-4 mt-2">
+          <div className="flex mb-2 items-center justify-between">
             {/* Logo Section */}
             <div className="flex shrink-0">
               <Link to="/" className="flex items-center">

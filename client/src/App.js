@@ -16,15 +16,12 @@ function App() {
       <Route path="/Signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
 
-      {/* Protected routes */}
-      {user && (
-        <>
+
           <Route path="/Home" element={<Home />} />
           <Route path="/addlocation" element={<Addlocation />} />
-        </>
-      )}
 
-      <Route path="*" element={<Navigate replace to="/login" />} />
+
+  
     </Routes>
   );
 }

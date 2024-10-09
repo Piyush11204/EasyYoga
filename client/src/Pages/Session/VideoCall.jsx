@@ -16,9 +16,7 @@ const VideoCall = () => {
   useEffect(() => {
     startLocalStream();
     return () => {
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
+      endCall(); // Clean up on component unmount
     };
   }, []);
 
@@ -33,14 +31,18 @@ const VideoCall = () => {
 
       initializePeer(stream);
     } catch (err) {
-      console.error('Error accessing media devices:', err);
-      if (err.name === 'NotFoundError') {
-        setError('No camera found. Please ensure you have a camera connected and try again.');
-      } else if (err.name === 'NotAllowedError') {
-        setError('Camera access denied. Please allow camera access and try again.');
-      } else {
-        setError('Failed to access camera and microphone. Please ensure they are connected and you have given permission to use them.');
-      }
+      handleMediaError(err);
+    }
+  };
+
+  const handleMediaError = (err) => {
+    console.error('Error accessing media devices:', err);
+    if (err.name === 'NotFoundError') {
+      setError('No camera found. Please ensure you have a camera connected and try again.');
+    } else if (err.name === 'NotAllowedError') {
+      setError('Camera access denied. Please allow camera access and try again.');
+    } else {
+      setError('Failed to access camera and microphone. Please ensure they are connected and you have given permission to use them.');
     }
   };
 
@@ -62,6 +64,11 @@ const VideoCall = () => {
       }
     });
 
+    newPeer.on('error', err => {
+      console.error('Peer error:', err);
+      setError('An error occurred during the connection.');
+    });
+
     setPeer(newPeer);
   };
 
@@ -77,7 +84,7 @@ const VideoCall = () => {
 
   const toggleVideo = () => {
     if (localStream) {
-      const videoTrack = localStream.getVideoTracks()[2];
+      const videoTrack = localStream.getVideoTracks()[0]; // Use index 0 for the first video track
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled; // Toggle the video track
         setIsVideoOn(videoTrack.enabled); // Update video state
@@ -90,7 +97,7 @@ const VideoCall = () => {
       peer.destroy();
     }
     if (localStream) {
-      localStream.getTracks().forEach(track => track.stop());
+      localStream.getTracks().forEach(track => track.stop()); // Stop all tracks
     }
     setLocalStream(null);
     setRemoteStream(null);

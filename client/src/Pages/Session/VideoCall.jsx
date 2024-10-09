@@ -26,9 +26,11 @@ const VideoCall = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       setLocalStream(stream);
+
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
+      
       initializePeer(stream);
     } catch (err) {
       console.error('Error accessing media devices:', err);
@@ -88,7 +90,7 @@ const VideoCall = () => {
 
   const connectPeers = () => {
     if (peer) {
-      const peerData = prompt("Enter the peer data:");
+      const peerData = prompt('Enter the peer data:');
       try {
         peer.signal(JSON.parse(peerData));
       } catch (err) {

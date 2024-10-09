@@ -4,6 +4,9 @@ import Signup from "./Pages//Singup/index"; // Fix spelling from "Singup" to "Si
 import Login from "./Pages/Login";
 import Home from "./Pages/Home/Home";
 import Addlocation from "./Pages/Addlocation/Addlocation";
+import AboutPage from "./Pages/About/AboutPage";
+import ClassesPage from "./Pages/Classes/ClassesPage";
+import VideoCall from "./Pages/Session/VideoCall";
 
 function App() {
   const user = localStorage.getItem("token");
@@ -15,10 +18,13 @@ function App() {
       <Route path="/" element={<Navigate replace to="/Home" />} />
       <Route path="/Signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/Home" element={<Home />} />
+      <Route path="/addlocation" element={<Addlocation />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/classes" element={<ClassesPage />} />
+      <Route path="/schedule" element={<VideoCall />} />
 
 
-          <Route path="/Home" element={<Home />} />
-          <Route path="/addlocation" element={<Addlocation />} />
 
 
   

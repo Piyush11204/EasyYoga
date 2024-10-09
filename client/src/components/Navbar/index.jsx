@@ -7,7 +7,7 @@ import YogaLogo from "../../img/YogaLogin.png";
 const Navbar = () => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = () => {
     window.open("http://localhost:8080/api/auth/logout", "_self");
@@ -31,9 +31,9 @@ const Navbar = () => {
 
   return (
     <div className="w-full">
-      <header className="fixed  inset-x-0 top-0 z-30 bg-violet-600/80 py-1 shadow-lg backdrop-blur-lg border-gray-100">
-        <div className="px-4 mt-2">
-          <div className="flex mb-2 items-center justify-between">
+      <header className="fixed inset-x-0 top-0 z-30 bg-violet-600/80 py-1 shadow-lg backdrop-blur-lg border-gray-100">
+        <div className="px-4">
+          <div className="flex items-center justify-between">
             {/* Logo Section */}
             <div className="flex shrink-0">
               <Link to="/" className="flex items-center">
@@ -79,49 +79,47 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="md:hidden text-white"
             >
               <Menu size={24} />
             </button>
-
-            {/* Mobile Sidebar Menu */}
-            <div
-              className={`fixed top-0 right-0 h-full w-2/3 bg-violet-600 text-white z-40 transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} md:hidden`}
-              style={{ boxShadow: 'rgba(0, 0, 0, 0.2) 0px 10px 20px' }}
-            >
-              <div className="flex flex-col p-4 space-y-4">
-                <Link to="/" className="hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-                <Link to="/classes" className="hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsMobileMenuOpen(false)}>Classes</Link>
-                <Link to="/schedule" className="hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsMobileMenuOpen(false)}>Schedule</Link>
-                <Link to="/about" className="hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
-                <Link to="/contact" className="hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
-                {currentUser ? (
-                  <>
-                    <div className="mt-4">
-                      <span>{currentUser.name}</span>
-                    </div>
-                    <button
-                      onClick={handleLogout}
-                      className="px-4 py-2 bg-white text-violet-600 rounded-lg hover:bg-gray-100"
-                    >
-                      <LogOut size={20} className="mr-2" />
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <Link
-                    to="/login"
-                    className="px-4 py-2 bg-white text-violet-600 rounded-lg hover:bg-gray-100"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <User size={20} className="mr-2" />
-                    Login
-                  </Link>
-                )}
-              </div>
-            </div>
           </div>
+
+          {/* Dropdown Menu for Mobile */}
+          {isDropdownOpen && (
+            <div className="md:hidden bg-violet-600 text-white shadow-lg rounded-lg mt-2 py-2 px-4 space-y-4 transition-all">
+              <Link to="/" className="block hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsDropdownOpen(false)}>Home</Link>
+              <Link to="/classes" className="block hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsDropdownOpen(false)}>Classes</Link>
+              <Link to="/schedule" className="block hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsDropdownOpen(false)}>Schedule</Link>
+              <Link to="/about" className="block hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsDropdownOpen(false)}>About</Link>
+              <Link to="/contact" className="block hover:bg-violet-500 rounded-lg px-4 py-2" onClick={() => setIsDropdownOpen(false)}>Contact</Link>
+
+              {currentUser ? (
+                <>
+                  <div className="mt-4">
+                    <span>{currentUser.name}</span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="block px-4 py-2 bg-white text-violet-600 rounded-lg hover:bg-gray-100"
+                  >
+                    <LogOut size={20} className="mr-2" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  className="block px-4 py-2 bg-white text-violet-600 rounded-lg hover:bg-gray-100"
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <User size={20} className="mr-2" />
+                  Login
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </header>
     </div>

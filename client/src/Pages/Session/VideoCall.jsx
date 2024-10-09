@@ -30,11 +30,17 @@ const VideoCall = () => {
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
-      
+
       initializePeer(stream);
     } catch (err) {
       console.error('Error accessing media devices:', err);
-      setError('Failed to access camera and microphone. Please ensure they are connected and you have given permission to use them.');
+      if (err.name === 'NotFoundError') {
+        setError('No camera found. Please ensure you have a camera connected and try again.');
+      } else if (err.name === 'NotAllowedError') {
+        setError('Camera access denied. Please allow camera access and try again.');
+      } else {
+        setError('Failed to access camera and microphone. Please ensure they are connected and you have given permission to use them.');
+      }
     }
   };
 
@@ -61,19 +67,21 @@ const VideoCall = () => {
 
   const toggleMute = () => {
     if (localStream) {
-      localStream.getAudioTracks().forEach(track => {
-        track.enabled = isMuted;
-      });
-      setIsMuted(!isMuted);
+      const audioTrack = localStream.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = !audioTrack.enabled; // Toggle the audio track
+        setIsMuted(!audioTrack.enabled); // Update mute state
+      }
     }
   };
 
   const toggleVideo = () => {
     if (localStream) {
-      localStream.getVideoTracks().forEach(track => {
-        track.enabled = !isVideoOn;
-      });
-      setIsVideoOn(!isVideoOn);
+      const videoTrack = localStream.getVideoTracks()[2];
+      if (videoTrack) {
+        videoTrack.enabled = !videoTrack.enabled; // Toggle the video track
+        setIsVideoOn(videoTrack.enabled); // Update video state
+      }
     }
   };
 

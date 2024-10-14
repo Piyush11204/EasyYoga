@@ -7,37 +7,37 @@ const yogaStyles = [
     id: 'hatha',
     name: 'Hatha Yoga',
     description: 'A gentle introduction to basic yoga postures.',
-    image: '/api/placeholder/300/200',
+    image: 'https://img.freepik.com/premium-photo/warm-sun-group-vibrant-practitioners-joyfully-flows-through-their-hatha-yoga-poses-o_1176614-44791.jpg?w=360',
   },
   {
     id: 'vinyasa',
     name: 'Vinyasa Flow',
     description: 'A dynamic practice that links movement and breath.',
-    image: '/api/placeholder/300/200',
+    image: 'https://imgcdn.stablediffusionweb.com/2024/4/12/b37fe927-d74b-4d51-bf65-418124ba978b.jpg',
   },
   {
     id: 'yin',
     name: 'Yin Yoga',
     description: 'A slow-paced style of yoga with seated postures held for longer periods.',
-    image: '/api/placeholder/300/200',
+    image: 'https://img.freepik.com/premium-photo/ai-generated-yoga-sequence-core-strength-flexibility_1290175-24922.jpg',
   },
   {
     id: 'ashtanga',
     name: 'Ashtanga Yoga',
     description: 'A rigorous style of yoga that follows a specific sequence of postures.',
-    image: '/api/placeholder/300/200',
+    image: 'https://t4.ftcdn.net/jpg/03/17/67/35/360_F_317673534_QczRUjz88Unugb9aOmBZqi5tmMIdHubX.jpg',
   },
   {
     id: 'kundalini',
     name: 'Kundalini Yoga',
     description: 'A practice that incorporates movement, dynamic breathing techniques, meditation, and chanting.',
-    image: '/api/placeholder/300/200',
+    image: 'https://static.vecteezy.com/system/resources/thumbnails/023/430/643/small_2x/ai-generated-image-free-photo.jpg',
   },
   {
     id: 'restorative',
     name: 'Restorative Yoga',
     description: 'A relaxing practice that holds yoga poses for longer periods of time with the help of props.',
-    image: '/api/placeholder/300/200',
+    image: 'https://thumbs.dreamstime.com/b/woman-pose-fitness-person-stress-spiritual-exercise-class-meditating-yoga-lotus-generative-ai-woman-man-restorative-pranayama-286160078.jpg',
   },
 ];
 
@@ -72,7 +72,7 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {yogaStyles.map((style) => (
               <Link to={`/yoga/${style.id}`} key={style.id} className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
-                <img src={style.image} alt={style.name} className="w-full h-48 object-cover" />
+                <img src={style.image} alt={style.name} className="w-full h-60 object-top" />
                 <div className="p-6">
                   <h3 className="text-xl font-semibold mb-2">{style.name}</h3>
                   <p className="mb-4">{style.description}</p>

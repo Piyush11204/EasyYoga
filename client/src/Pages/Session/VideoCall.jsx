@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Peer from 'simple-peer';
 import { Video, Mic, MicOff, VideoOff, PhoneOff, Camera, CameraOff } from 'lucide-react';
 
@@ -9,6 +9,8 @@ const VideoCall = () => {
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [peer, setPeer] = useState(null);
   const [error, setError] = useState(null);
+  const [peerCode, setPeerCode] = useState('');
+  const [remotePeerCode, setRemotePeerCode] = useState(''); // To hold the remote peer code for connection
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
@@ -29,6 +31,7 @@ const VideoCall = () => {
         localVideoRef.current.srcObject = stream;
       }
 
+      // Initialize peer after local stream starts
       initializePeer(stream);
     } catch (err) {
       handleMediaError(err);
@@ -37,13 +40,7 @@ const VideoCall = () => {
 
   const handleMediaError = (err) => {
     console.error('Error accessing media devices:', err);
-    if (err.name === 'NotFoundError') {
-      setError('No camera found. Please ensure you have a camera connected and try again.');
-    } else if (err.name === 'NotAllowedError') {
-      setError('Camera access denied. Please allow camera access and try again.');
-    } else {
-      setError('Failed to access camera and microphone. Please ensure they are connected and you have given permission to use them.');
-    }
+    setError('Failed to access camera and microphone. Please ensure they are connected and you have given permission to use them.');
   };
 
   const initializePeer = (stream) => {
@@ -54,6 +51,7 @@ const VideoCall = () => {
     });
 
     newPeer.on('signal', data => {
+      // Send the signal data (peer code) to the other peer (this could be done via a server or any signaling mechanism)
       console.log('Signal data (send this to the other peer):', JSON.stringify(data));
     });
 
@@ -84,7 +82,7 @@ const VideoCall = () => {
 
   const toggleVideo = () => {
     if (localStream) {
-      const videoTrack = localStream.getVideoTracks()[0]; // Use index 0 for the first video track
+      const videoTrack = localStream.getVideoTracks()[0];
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled; // Toggle the video track
         setIsVideoOn(videoTrack.enabled); // Update video state
@@ -97,21 +95,28 @@ const VideoCall = () => {
       peer.destroy();
     }
     if (localStream) {
-      localStream.getTracks().forEach(track => track.stop()); // Stop all tracks
+      localStream.getTracks().forEach(track => track.stop());
     }
     setLocalStream(null);
     setRemoteStream(null);
   };
 
-  const connectPeers = () => {
-    if (peer) {
-      const peerData = prompt('Enter the peer data:');
-      try {
-        peer.signal(JSON.parse(peerData));
-      } catch (err) {
-        console.error('Invalid peer data:', err);
-        setError('Invalid peer data. Please try again.');
-      }
+  const generatePeerCode = () => {
+    // Generate a random 6-digit code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    setPeerCode(code);
+    console.log(`Generated peer code: ${code}`);
+  };
+
+  const connectPeer = () => {
+    if (remotePeerCode) {
+      // Assuming remotePeerCode is received from another user through some signaling
+      console.log(`Connecting to peer with code: ${remotePeerCode}`);
+      
+      // Signal the connection to the other peer
+      peer.signal(remotePeerCode);
+    } else {
+      setError('Please enter a valid peer code to connect.');
     }
   };
 
@@ -156,30 +161,41 @@ const VideoCall = () => {
 
       <footer className="bg-gray-800 text-white p-4">
         <div className="flex flex-wrap justify-center items-center space-x-2 space-y-2">
-          <button
-            onClick={toggleMute}
-            className={`p-2 rounded-full ${isMuted ? 'bg-red-500' : 'bg-gray-600 hover:bg-gray-700'}`}
-          >
+          <button onClick={toggleMute} className={`p-2 rounded-full ${isMuted ? 'bg-red-500' : 'bg-gray-600 hover:bg-gray-700'}`}>
             {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
           </button>
-          <button
-            onClick={toggleVideo}
-            className={`p-2 rounded-full ${!isVideoOn ? 'bg-red-500' : 'bg-gray-600 hover:bg-gray-700'}`}
-          >
+          <button onClick={toggleVideo} className={`p-2 rounded-full ${!isVideoOn ? 'bg-red-500' : 'bg-gray-600 hover:bg-gray-700'}`}>
             {isVideoOn ? <Video size={24} /> : <VideoOff size={24} />}
           </button>
-          <button
-            onClick={endCall}
-            className="p-2 rounded-full bg-red-500 hover:bg-red-600"
-          >
+          <button onClick={endCall} className="p-2 rounded-full bg-red-500 hover:bg-red-600">
             <PhoneOff size={24} />
           </button>
-          <button
-            onClick={connectPeers}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded"
-          >
-            Connect to Peer
+          <button onClick={generatePeerCode} className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded">
+            Generate Peer Code
           </button>
+          {peerCode && (
+            <div className="mt-4">
+              <input
+                type="text"
+                value={peerCode}
+                readOnly
+                className="bg-gray-200 text-gray-800 p-2 rounded"
+                placeholder="Share this peer code"
+              />
+              <div className="flex flex-col mt-2">
+                <input
+                  type="text"
+                  value={remotePeerCode}
+                  onChange={(e) => setRemotePeerCode(e.target.value)}
+                  className="bg-gray-200 text-gray-800 p-2 rounded mb-2"
+                  placeholder="Enter peer code to connect"
+                />
+                <button onClick={connectPeer} className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded">
+                  Connect to Peer
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </footer>
     </div>

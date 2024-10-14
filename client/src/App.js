@@ -8,6 +8,7 @@ import AboutPage from "./Pages/About/AboutPage";
 import ClassesPage from "./Pages/Classes/ClassesPage";
 import VideoCall from "./Pages/Session/VideoCall";
 import ContactUs from "./Pages/Contact/ContactUs";
+import YogaDetailPage from "./Pages/Home/YogaDetailPage";
 
 function App() {
   const user = localStorage.getItem("token");
@@ -25,6 +26,7 @@ function App() {
       <Route path="/classes" element={<ClassesPage />} />
       <Route path="/schedule" element={<VideoCall />} />
       <Route path="/contact" element={<ContactUs />} />
+      <Route path="/yoga/:id" element={<YogaDetailPage />} />
 
 
 

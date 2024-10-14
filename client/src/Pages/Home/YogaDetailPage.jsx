@@ -1,4 +1,5 @@
 import React from 'react';
+import { Heart, Award, List, Apple, ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
 const yogaData = {
@@ -174,52 +175,88 @@ const yogaData = {
       ],
     },
   };
-const YogaDetailPage = () => {
-  const { id } = useParams();
-  const yoga = yogaData[id];
-
-  if (!yoga) {
-    return <div>Yoga style not found</div>;
-  }
-
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-6">{yoga.name}</h1>
-      <img src="/api/placeholder/800/400" alt={yoga.name} className="w-full h-64 object-cover rounded-lg mb-8" />
-      
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Description</h2>
-        <p>{yoga.description}</p>
-      </section>
-      
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Benefits</h2>
-        <ul className="list-disc pl-6">
-          {yoga.benefits.map((benefit, index) => (
-            <li key={index}>{benefit}</li>
-          ))}
-        </ul>
-      </section>
-      
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Step-by-Step Guide</h2>
-        <ol className="list-decimal pl-6">
-          {yoga.steps.map((step, index) => (
-            <li key={index} className="mb-2">{step}</li>
-          ))}
-        </ol>
-      </section>
-      
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Recommended Food Routine</h2>
-        <ul className="list-disc pl-6">
-          {yoga.foodRoutine.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-      </section>
-    </div>
-  );
-};
-
-export default YogaDetailPage;
+  const YogaDetailPage = () => {
+    const { id } = useParams();
+    const yoga = yogaData[id];
+  
+    if (!yoga) {
+      return <div>Yoga style not found</div>;
+    }
+  
+    return (
+      <div className="bg-violet-50 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+          <a href="/" className="inline-flex items-center text-violet-600 hover:text-violet-800 mb-6">
+            <ArrowLeft className="mr-2" size={20} />
+            Back to All Styles
+          </a>
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="relative">
+              <img src="/api/placeholder/1200/400" alt={yoga.name} className="w-full h-64 object-cover" />
+              <div className="absolute inset-0 bg-violet-900 opacity-50"></div>
+              <h1 className="absolute bottom-4 left-4 text-4xl font-bold text-white">{yoga.name}</h1>
+            </div>
+            
+            <div className="p-6">
+              <section className="mb-8">
+                <p className="text-lg text-gray-700 leading-relaxed">{yoga.description}</p>
+              </section>
+  
+              <section className="mb-8">
+                <h2 className="text-2xl font-semibold mb-4 text-violet-800 flex items-center">
+                  <Heart className="mr-2" size={24} />
+                  Benefits
+                </h2>
+                <div className="bg-violet-100 rounded-lg p-4">
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {yoga.benefits.map((benefit, index) => (
+                      <li key={index} className="flex items-start">
+                        <Award className="mr-2 text-violet-500 flex-shrink-0" size={20} />
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+  
+              <section className="mb-8">
+                <h2 className="text-2xl font-semibold mb-4 text-violet-800 flex items-center">
+                  <List className="mr-2" size={24} />
+                  Step-by-Step Guide
+                </h2>
+                <div className="bg-violet-50 rounded-lg p-4">
+                  <ol className="space-y-4">
+                    {yoga.steps.map((step, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="bg-violet-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mr-3">{index + 1}</span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </section>
+  
+              <section>
+                <h2 className="text-2xl font-semibold mb-4 text-violet-800 flex items-center">
+                  <Apple className="mr-2" size={24} />
+                  Recommended Food Routine
+                </h2>
+                <div className="bg-violet-100 rounded-lg p-4">
+                  <ul className="space-y-2">
+                    {yoga.foodRoutine.map((item, index) => (
+                      <li key={index} className="flex items-center">
+                        <div className="w-2 h-2 bg-violet-500 rounded-full mr-3"></div>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  export default YogaDetailPage;

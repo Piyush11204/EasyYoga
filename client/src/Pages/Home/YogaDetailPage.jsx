@@ -55,7 +55,7 @@ const YogaDetailPage = () => {
         const frame = captureFrame();
         if (frame) {
             try {
-                const response = await axios.post('http://localhost:8080/api/analyze-pose', { frame });
+                const response = await axios.post('http://localhost:8080/api/pose/analyze-pose', { frame });
                 setAnalysisResult(response.data);
             } catch (error) {
                 console.error('Error analyzing pose:', error);

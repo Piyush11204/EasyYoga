@@ -4,24 +4,7 @@ const { handleAuth } = require("../controllers/auth");
 
 const CLIENT_URL = "http://localhost:3000/";
 
-// Successful login
-// router.get("/login/success", (req, res) => {
-//   if (req.user) {
-//     console.log("Authenticated User Data:", req.user);
-    
-//     res.status(200).json({
-//       success: true,
-//       message: "successful",
-//       user: req.user,
-//       session: req.session,
-//     });
-//   } else {
-//     res.status(401).json({
-//       success: false,
-//       message: "User not authenticated",
-//     });
-//   }
-// });
+
 router.get("/login/success", (req, res) => {
   if (req.user) {
     res.status(200).json({

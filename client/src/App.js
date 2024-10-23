@@ -1,6 +1,6 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 
-import Signup from "./Pages//Singup/index"; // Fix spelling from "Singup" to "Signup"
+import Signup from "./Pages/Singup/index"; // Fix spelling from "Singup" to "Signup"
 import Login from "./Pages/Login";
 import Home from "./Pages/Home/Home";
 import Addlocation from "./Pages/Addlocation/Addlocation";

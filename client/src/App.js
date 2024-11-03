@@ -8,7 +8,7 @@ import AboutPage from "./Pages/About/AboutPage";
 import ClassesPage from "./Pages/Classes/ClassesPage";
 import VideoCall from "./Pages/Session/VideoCall";
 import ContactUs from "./Pages/Contact/ContactUs";
-import YogaDetailPage from "./Pages/Home/YogaDetailPage";
+import YogaDetailPage from "./Pages/Home/YogaDetailPage.jsx";
 
 function App() {
   const user = localStorage.getItem("token");

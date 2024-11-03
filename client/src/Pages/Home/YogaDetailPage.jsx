@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, Award, List, Apple, ArrowLeft, Camera, Play, Square, 
-         CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { 
+    Heart, Award, List, Apple, ArrowLeft, Camera, Play, Square, 
+    CheckCircle, AlertCircle, RefreshCw, Clock, Users, BookOpen,
+    Calendar, Star , ChevronLeft, ChevronRight,
+} from 'lucide-react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import yogaData from './yogaData.json';
@@ -18,6 +21,7 @@ const YogaDetailPage = () => {
     const yoga = yogaData[id];
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const tabsContainerRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -82,28 +86,38 @@ const YogaDetailPage = () => {
             showNotification('Please start the camera first', 'error');
             return;
         }
-
+    
         setIsAnalyzing(true);
-        const frame = captureFrame();
-        
-        if (frame) {
-            try {
-                const response = await axios.post('http://localhost:8080/api/pose/analyze-pose', { frame });
-                setAnalysisResult(response.data);
-                showNotification('Pose analysis completed');
-            } catch (error) {
-                console.error('Error analyzing pose:', error);
-                setAnalysisResult({ 
-                    error: 'Failed to analyze pose. Please try again.' 
-                });
-                showNotification('Failed to analyze pose', 'error');
+    
+        try {
+            const frame = captureFrame();
+    
+            if (!frame) {
+                setAnalysisResult({ error: 'Failed to capture frame' });
+                showNotification('Failed to capture frame', 'error');
+                return;
             }
-        } else {
-            setAnalysisResult({ error: 'Failed to capture frame' });
-            showNotification('Failed to capture frame', 'error');
+    
+            const response = await axios.post('http://localhost:8080/api/pose/analyze-pose', { frame });
+            
+            if (response.status === 200 && response.data) {
+                setAnalysisResult(response.data);
+                showNotification('Pose analysis completed successfully');
+            } else {
+                setAnalysisResult({ error: 'Unexpected response from server' });
+                showNotification('Unexpected response from server', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Error analyzing pose:', error);
+            setAnalysisResult({ error: 'Failed to analyze pose. Please try again.' });
+            showNotification('Failed to analyze pose', 'error');
+        } finally {
+            setIsAnalyzing(false);
         }
-        setIsAnalyzing(false);
     };
+    
+    
 
     const TabButton = ({ label, tabName, icon: Icon }) => (
         <button
@@ -159,12 +173,36 @@ const YogaDetailPage = () => {
                     </div>
 
                     {/* Navigation Tabs */}
+                    <style jsx>{`
+                            .hide-scrollbar::-webkit-scrollbar {
+                                display: none;
+                            }
+                            .hide-scrollbar {
+                                -ms-overflow-style: none;
+                                scrollbar-width: none;
+                            }
+                        `}</style>
                     <div className="flex gap-4 p-6 bg-violet-50">
                         <TabButton label="Overview" tabName="overview" icon={List} />
                         <TabButton label="Practice" tabName="practice" icon={Camera} />
                         <TabButton label="Benefits" tabName="benefits" icon={Heart} />
                         <TabButton label="Food Guide" tabName="food" icon={Apple} />
+                        <TabButton label="Schedule" tabName="schedule" icon={Calendar} />
+                            <TabButton label="Reviews" tabName="reviews" icon={Star} />
+                            <TabButton label="Resources" tabName="resources" icon={BookOpen} />
                     </div>
+                    <button 
+                        onClick={() => {
+                            if (tabsContainerRef.current) {
+                                tabsContainerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+                            }
+                        }}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 h-full px-2 
+                            bg-gradient-to-l from-violet-50 to-transparent z-10 flex items-center md:hidden"
+                        aria-label="Scroll right"
+                    >
+                        <ChevronRight className="w-6 h-6 text-violet-600" />
+                    </button>
 
                     {/* Tab Content */}
                     <div className="p-8">
@@ -287,6 +325,71 @@ const YogaDetailPage = () => {
                                             <div className="flex items-center">
                                                 <div className="w-3 h-3 bg-violet-600 rounded-full mr-3" />
                                                 <p className="text-lg">{item}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                         {activeTab === 'schedule' && (
+                            <div className="space-y-6">
+                                <h2 className="text-3xl font-bold text-violet-800 mb-6">Weekly Schedule</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {['Monday', 'Wednesday', 'Friday'].map((day) => (
+                                        <div key={day} className="bg-violet-50 p-6 rounded-xl">
+                                            <h3 className="text-xl font-semibold mb-3">{day}</h3>
+                                            <div className="flex items-center mb-2">
+                                                <Clock size={18} className="mr-2 text-violet-600" />
+                                                <span>6:00 AM - 7:30 AM</span>
+                                            </div>
+                                            <div className="flex items-center">
+                                                <Users size={18} className="mr-2 text-violet-600" />
+                                                <span>Max 12 participants</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'reviews' && (
+                            <div className="space-y-6">
+                                <h2 className="text-3xl font-bold text-violet-800 mb-6">Student Reviews</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {[
+                                        { name: "Sarah M.", rating: 5, comment: "Amazing practice session! Really helped with my flexibility." },
+                                        { name: "John D.", rating: 4, comment: "Great instructor and peaceful environment." }
+                                    ].map((review, index) => (
+                                        <div key={index} className="bg-violet-50 p-6 rounded-xl">
+                                            <div className="flex items-center mb-3">
+                                                <h3 className="font-semibold mr-3">{review.name}</h3>
+                                                <div className="flex">
+                                                    {[...Array(review.rating)].map((_, i) => (
+                                                        <Star key={i} size={16} className="text-yellow-400 fill-current" />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <p className="text-gray-700">{review.comment}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'resources' && (
+                            <div className="space-y-6">
+                                <h2 className="text-3xl font-bold text-violet-800 mb-6">Learning Resources</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {[
+                                        { title: "Beginner's Guide", type: "PDF", size: "2.3 MB" },
+                                        { title: "Breathing Techniques", type: "Video", size: "15 MB" },
+                                        { title: "Pose Reference", type: "Images", size: "5.1 MB" }
+                                    ].map((resource, index) => (
+                                        <div key={index} className="bg-violet-50 p-6 rounded-xl">
+                                            <h3 className="font-semibold mb-2">{resource.title}</h3>
+                                            <div className="flex items-center justify-between text-sm text-gray-600">
+                                                <span>{resource.type}</span>
+                                                <span>{resource.size}</span>
                                             </div>
                                         </div>
                                     ))}

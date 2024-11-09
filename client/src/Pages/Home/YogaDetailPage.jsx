@@ -81,43 +81,42 @@ const YogaDetailPage = () => {
         return null;
     };
 
-    const analyzeFrame = async () => {
-        if (!isCameraActive) {
-            showNotification('Please start the camera first', 'error');
+const analyzeFrame = async () => {
+    if (!isCameraActive) {
+        showNotification('Please start the camera first', 'error');
+        return;
+    }
+
+    setIsAnalyzing(true);
+
+    try {
+        const frame = captureFrame();
+
+        if (!frame) {
+            setAnalysisResult({ error: 'Failed to capture frame' });
+            showNotification('Failed to capture frame', 'error');
             return;
         }
-    
-        setIsAnalyzing(true);
-    
-        try {
-            const frame = captureFrame();
-    
-            if (!frame) {
-                setAnalysisResult({ error: 'Failed to capture frame' });
-                showNotification('Failed to capture frame', 'error');
-                return;
-            }
-    
-            const response = await axios.post('http://localhost:8080/api/pose/analyze-pose', { frame });
-            
-            if (response.status === 200 && response.data) {
-                setAnalysisResult(response.data);
-                showNotification('Pose analysis completed successfully');
-            } else {
-                setAnalysisResult({ error: 'Unexpected response from server' });
-                showNotification('Unexpected response from server', 'error');
-            }
-            
-        } catch (error) {
-            console.error('Error analyzing pose:', error);
-            setAnalysisResult({ error: 'Failed to analyze pose. Please try again.' });
-            showNotification('Failed to analyze pose', 'error');
-        } finally {
-            setIsAnalyzing(false);
+
+        const response = await axios.post('http://localhost:8080/api/pose/analyze-pose', { frame });
+        
+        if (response.status === 200 && response.data) {
+            setAnalysisResult(response.data);
+            showNotification('Pose analysis completed successfully');
+        } else {
+            setAnalysisResult({ error: 'Unexpected response from server' });
+            showNotification('Unexpected response from server', 'error');
         }
-    };
-    
-    
+        
+    } catch (error) {
+        console.error('Error analyzing pose:', error);
+        setAnalysisResult({ error: 'Failed to analyze pose. Please try again.' });
+        showNotification('Failed to analyze pose', 'error');
+    } finally {
+        setIsAnalyzing(false);
+    }
+};
+
 
     const TabButton = ({ label, tabName, icon: Icon }) => (
         <button

@@ -1,22 +1,22 @@
+// roomManager.js
+
 const rooms = new Map();
 
 const leaveRoom = (socket, roomCode, io) => {
     const room = rooms.get(roomCode);
-    if (room) {
+    if (room && room.participants.has(socket.id)) {
         room.participants.delete(socket.id);
+        socket.leave(roomCode);
+        console.log(`User ${socket.id} left room ${roomCode}`);
+
+        // Notify other participants
         socket.to(roomCode).emit('user-left', { userId: socket.id });
-        
+
+        // Check if room is empty and delete it
         if (room.participants.size === 0) {
             rooms.delete(roomCode);
             console.log(`Room ${roomCode} deleted`);
-        } else if (room.host === socket.id) {
-            const [newHost] = room.participants;
-            room.host = newHost;
-            io.to(roomCode).emit('new-host', { hostId: newHost });
         }
-        
-        socket.leave(roomCode);
-        console.log(`User ${socket.id} left room ${roomCode}`);
     }
 };
 

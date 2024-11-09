@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {  Link } from 'react-router-dom';
 import axios from "axios";
-import { icons, Menu, LogOut, User } from 'lucide-react'; // Import Lucide
+import {  Menu, LogOut, User } from 'lucide-react'; // Import Lucide
  
 import YogaLogo from "../../img/YogaLogin.png";
 

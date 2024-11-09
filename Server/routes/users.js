@@ -19,7 +19,7 @@ const auth = (req, res, next) => {
 };
 
 // we use router.get to get the user 
-router.get('/', handleAllUsers);
+router.get('/allUsers', handleAllUsers);
 // the post is use to create the new user...
 router.post('/',handleCreatingUser);
 

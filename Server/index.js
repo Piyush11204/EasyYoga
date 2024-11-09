@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const http = require('http');
-const { Server } = require('socket.io');
 const connectDB = require("./DB/db");
 const passport = require("passport");
 const bodyParser = require('body-parser');
@@ -15,11 +14,11 @@ const corsMiddleware = require('./middleware/cors');
 const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const locationRoutes = require('./routes/addLocation');
-const videoRoutes = require('./routes/videoRoutes');
+// const videoRoutes = require('./routes/videoRoutes');
 const poseRoutes = require('./routes/poseRoutes');
 
 // Import socket handler
-const setupSocketHandlers = require('./utils/socketHandler');
+// const setupSocketHandlers = require('./utils/socketHandler');
 
 // Initialize passport config
 require("./utils/passport.js");
@@ -45,22 +44,34 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Socket.IO setup
-const io = new Server(server, {
-    cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"],
-        credentials: true
-    }
-});
+const io = require("socket.io")(server, {
+	cors: {
+		origin: ["https://video-call-wine.vercel.app", "http://localhost:3000"],
+		methods: [ "GET", "POST" ]
+	}
+})
 
-// Setup socket handlers
-setupSocketHandlers(io);
+io.on("connection", (socket) => {
+	socket.emit("me", socket.id)
+
+	socket.on("disconnect", () => {
+		socket.broadcast.emit("callEnded")
+	})
+
+	socket.on("callUser", (data) => {
+		io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
+	})
+
+	socket.on("answerCall", (data) => {
+		io.to(data.to).emit("callAccepted", data.signal)
+	})
+})
 
 // API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/addlocation', locationRoutes);
-app.use('/api/video', videoRoutes);
+// app.use('/api/video', videoRoutes);
 app.use('/api/pose', poseRoutes);
 
 // Error handling middleware

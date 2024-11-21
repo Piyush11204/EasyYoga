@@ -46,10 +46,10 @@ const Footer = () => {
             </h5>
             <ul className="space-y-3">
               {[
-                { href: "/classes", icon: <Calendar size={16} className="mr-2" />, label: "Class Schedule" },
-                { href: "/instructors", icon: <Users size={16} className="mr-2" />, label: "Our Teachers" },
-                { href: "/workshops", icon: <Heart size={16} className="mr-2" />, label: "Workshops" },
-                { href: "/membership", icon: <Shield size={16} className="mr-2" />, label: "Membership" }
+                { href: "/", icon: <Calendar size={16} className="mr-2" />, label: "Home Page" },
+                { href: "/about", icon: <Heart size={16} className="mr-2" />, label: "About Us" },
+                { href: "/contact", icon: <Shield size={16} className="mr-2" />, label: "Contact Us" },
+                { href: "/schedule", icon: <Users size={16} className="mr-2" />, label: "Schedule" },
               ].map(({ href, icon, label }) => (
                 <li key={href}>
                   <a 

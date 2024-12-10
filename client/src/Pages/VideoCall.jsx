@@ -184,9 +184,8 @@ const VideoCall = () => {
             setIdToCall={setIdToCall}
         />
     ) : (
-        <div className="min-h-screen bg-gray-900 text-white relative">
-                <h1>hello</h1>
-                <h1>hello</h1>
+        <div className="min-h-screen mt-16 bg-gray-900 text-white relative">
+           
                
             {/* Main video (other person or placeholder) */}
             <div className="w-full h-screen">

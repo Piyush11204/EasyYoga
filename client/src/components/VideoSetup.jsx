@@ -53,7 +53,7 @@ const VideoSetup = ({ setName, setDeviceOptions, startCall }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto grid mt-20 grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Side - Video Preview */}
         <div className="space-y-4">
             <h2 className="text-3xl font-bold">VideoCall Preview</h2>

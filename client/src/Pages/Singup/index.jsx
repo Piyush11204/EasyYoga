@@ -14,7 +14,7 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = "http://localhost:8080/api/users"; 
+            const url = "https://easyyoga-1.onrender.com/api/users"; 
             const { data: res } = await axios.post(url, data);
             localStorage.setItem("token", res.data);
             window.location = "/";
@@ -26,7 +26,7 @@ const Signup = () => {
     };
 
     const handleGoogleSignUp = () => {
-        window.open("http://localhost:8080/api/auth/google", "_self"); // Adjust the URL as necessary
+        window.open("https://easyyoga-1.onrender.com/api/auth/google", "_self"); // Adjust the URL as necessary
     };
 
     return (

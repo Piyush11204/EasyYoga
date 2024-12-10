@@ -6,7 +6,7 @@ import YogaLogo from "../../img/A.png";
 
 const Login = () => {
     const google = () => {
-        window.open('http://localhost:8080/api/auth/google', '_self'); 
+        window.open('https://easyyoga-1.onrender.com/api/auth/google', '_self'); 
     };
 
     const [data, setData] = useState({ email: "", password: "" });
@@ -19,7 +19,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = "http://localhost:8080/api/auth";
+            const url = "https://easyyoga-1.onrender.com/api/auth";
             const { data: res } = await axios.post(url, data);
             localStorage.setItem("token", res.data);
 

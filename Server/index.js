@@ -14,13 +14,8 @@ const corsMiddleware = require('./middleware/cors');
 const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const locationRoutes = require('./routes/addLocation');
-// const videoRoutes = require('./routes/videoRoutes');
 const poseRoutes = require('./routes/poseRoutes');
 
-// Import socket handler
-// const setupSocketHandlers = require('./utils/socketHandler');
-
-// Initialize passport config
 require("./utils/passport.js");
 
 // Create Express app and HTTP server
@@ -30,13 +25,23 @@ const server = http.createServer(app);
 // Database connection
 connectDB();
 
-// Middleware setup
+// Middleware setup with consolidated and optimized configurations
 app.use(sessionMiddleware);
 app.use(corsMiddleware);
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.json({ limit: '50mb' }));
-// app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+// Improved body parsing with higher limits and proper configuration
+app.use(bodyParser.json({
+  limit: '500mb',
+  verify: (req, res, buf) => {
+    req.rawBody = buf.toString();
+  }
+}));
+app.use(bodyParser.urlencoded({ 
+  limit: '500mb', 
+  extended: true 
+}));
+
+// Static file serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Passport middleware
@@ -44,54 +49,59 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Socket.IO setup
-const io = require("socket.io")(server, {
-	cors: {
-		origin: ["https://video-call-wine.vercel.app", "http://localhost:3000"],
-		methods: [ "GET", "POST" ]
-	}
-})
-
-io.on("connection", (socket) => {
-	socket.emit("me", socket.id)
-
-	socket.on("disconnect", () => {
-		socket.broadcast.emit("callEnded")
-	})
-
-	socket.on("callUser", (data) => {
-		io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
-	})
-
-	socket.on("answerCall", (data) => {
-		io.to(data.to).emit("callAccepted", data.signal)
-	})
-})
+const io = require("socket.io")(server, { 
+  cors: { 
+    origin: ["https://video-call-wine.vercel.app", "http://localhost:3000"], 
+    methods: ["GET", "POST"] 
+  },
+  maxHttpBufferSize: 1e8 // Increase buffer size to 100MB
+});
 
 // API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/addlocation', locationRoutes);
-// app.use('/api/video', videoRoutes);
 app.use('/api/pose', poseRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ 
-        error: 'Something went wrong!',
-        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+  console.error(err.stack);
+  res.status(500).json({
+    error: 'Something went wrong!',
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
+
+// Socket.IO connection handling
+io.on("connection", (socket) => {
+  socket.emit("me", socket.id);
+
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("callEnded");
+  });
+
+  socket.on("callUser", (data) => {
+    io.to(data.userToCall).emit("callUser", { 
+      signal: data.signalData, 
+      from: data.from, 
+      name: data.name 
     });
+  });
+
+  socket.on("answerCall", (data) => {
+    io.to(data.to).emit("callAccepted", data.signal);
+  });
 });
 
 // Start the server
 const port = process.env.PORT || 8080;
 server.listen(port, () => {
-    console.log(`Server and Socket.IO listening on port ${port}...`);
+  console.log(`Server and Socket.IO listening on port ${port}...`);
 });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
-    console.error('Unhandled Promise Rejection:', err);
-    // In production, you might want to crash the process
-    // process.exit(1);
+  console.error('Unhandled Promise Rejection:', err);
+  // Optionally log to an error tracking service
+  // process.exit(1); // Uncomment in production if you want to crash on unhandled rejections
 });

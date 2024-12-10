@@ -132,7 +132,7 @@ const ClassesPage = () => {
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                   Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                 </p>
-                <a href="#" className="text-violet-600 font-medium hover:underline">Read more</a>
+                <a href="/" className="text-violet-600 font-medium hover:underline">Read more</a>
               </div>
             ))}
           </div>
@@ -148,7 +148,7 @@ const ClassesPage = () => {
                   Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                   Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                 </p>
-                <a href="#" className="text-violet-600 font-medium hover:underline">Read full article</a>
+                <a href="/404_forNow" className="text-violet-600 font-medium hover:underline">Read full article</a>
               </div>
             ))}
           </div>

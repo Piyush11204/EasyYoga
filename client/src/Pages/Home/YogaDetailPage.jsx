@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
     Heart, Award, List, Apple, ArrowLeft, Camera, Play, Square, 
     CheckCircle, AlertCircle, RefreshCw, Clock, Users, BookOpen,
-    Calendar, Star , ChevronLeft, ChevronRight,
+    Calendar, Star , ChevronRight,
 } from 'lucide-react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';

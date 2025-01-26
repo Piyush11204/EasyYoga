@@ -5,19 +5,19 @@ import Peer from "simple-peer";
 import io from "socket.io-client";
 import VideoSetup from "../components/VideoSetup";
 
-// const socket = io.connect('http://localhost:8080');
-const socket = io.connect('https://videocall-metl.onrender.com', {
-    reconnection: true,
-    reconnectionAttempts: 5,
-   reconnectionDelay: 1000,
+const socket = io.connect('http://localhost:8080');
+// const socket = io.connect('https://videocall-metl.onrender.com', {
+//     reconnection: true,
+//     reconnectionAttempts: 5,
+//    reconnectionDelay: 1000,
 
-});
+// });
 
 socket.on("connect_error", (err) => {
     console.error("Socket connection error:", err);
-    toast.error("Connection error. Please try again.", {
-        icon: <XCircle className="w-5 h-5 text-red-500" />
-    });
+    // toast.error("Connection error. Please try again.", {
+    //     icon: <XCircle className="w-5 h-5 text-red-500" />
+    // });
 });
 
 const VideoCall = () => {

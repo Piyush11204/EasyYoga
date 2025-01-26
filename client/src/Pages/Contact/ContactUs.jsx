@@ -19,7 +19,7 @@ const ContactUs = () => {
             <MapPin className="text-purple-500" size={40} />
             <div>
               <h2 className="text-lg font-semibold">Our Office</h2>
-              <p className="text-gray-600">123 Business Avenue, Suite 456, New York, NY 10001</p>
+              <p className="text-gray-600">B-205, Mahavir Arcade, Mahavir Nagar, Boisar</p>
             </div>
           </div>
           
@@ -28,7 +28,8 @@ const ContactUs = () => {
             <Phone className="text-purple-500" size={40} />
             <div>
               <h2 className="text-lg font-semibold">Phone</h2>
-              <p className="text-gray-600">+1 (800) 123-4567</p>
+              <p className="text-gray-600">+91 8329854765
+              </p>
             </div>
           </div>
           
@@ -37,7 +38,8 @@ const ContactUs = () => {
             <Mail className="text-purple-500" size={40} />
             <div>
               <h2 className="text-lg font-semibold">Email</h2>
-              <p className="text-gray-600">contact@business.com</p>
+              <p className="text-gray-600">yuvrajnpradhan0201@gmail.com 
+              </p>
             </div>
           </div>
         </div>

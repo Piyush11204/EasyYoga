@@ -3,7 +3,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import Signup from "./Pages/Singup/index"; 
 import Login from "./Pages/Login";
 import Home from "./Pages/Home/Home";
-import Addlocation from "./Pages/Addlocation/Addlocation";
+// import Addlocation from "./Pages/Addlocation/Addlocation";
 import AboutPage from "./Pages/About/AboutPage";
 import ClassesPage from "./Pages/Classes/ClassesPage";
 import VideoCall from "./Pages/VideoCall.jsx";
@@ -21,7 +21,7 @@ function App() {
       <Route path="/Signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
       <Route path="/Home" element={<Home />} />
-      <Route path="/addlocation" element={<Addlocation />} />
+      {/* <Route path="/addlocation" element={<Addlocation />} /> */}
       <Route path="/about" element={<AboutPage />} />
       <Route path="/classes" element={<ClassesPage />} />
       <Route path="/schedule" element={<VideoCall />} />

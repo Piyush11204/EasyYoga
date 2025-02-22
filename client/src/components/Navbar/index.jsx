@@ -11,13 +11,13 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = () => {
-    window.open("http://localhost:8080/api/auth/logout", "_self");
+    window.open("https://easyyoga-1.onrender.com/api/auth/logout", "_self");
   };
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/auth/login/success", {
+        const response = await axios.get("https://easyyoga-1.onrender.com/api/auth/login/success", {
           withCredentials: true,
         });
         setCurrentUser(response.data.user);

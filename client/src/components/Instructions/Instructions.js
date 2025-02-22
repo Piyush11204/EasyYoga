@@ -1,5 +1,4 @@
 import React from 'react';
-import './Instructions.css'
 import { poseImages } from '../../utils/pose_images'
 import { poseInstructions } from '../../utils/data/index'
 

@@ -51,7 +51,7 @@ app.use(passport.session());
 // Socket.IO setup
 const io = require("socket.io")(server, { 
   cors: { 
-    origin: ["https://video-call-wine.vercel.app", "http://localhost:3000"], 
+    origin: "*", 
     methods: ["GET", "POST"] 
   },
   maxHttpBufferSize: 1e8 // Increase buffer size to 100MB

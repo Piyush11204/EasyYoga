@@ -9,12 +9,12 @@ import ClassesPage from "./Pages/Classes/ClassesPage";
 import VideoCall from "./Pages/VideoCall.jsx";
 import ContactUs from "./Pages/Contact/ContactUs";
 import YogaDetailPage from "./Pages/Home/YogaDetailPage.jsx";
+import Yoga from './Pages/Home/Yoga.js';
 
 function App() {
   const user = localStorage.getItem("token");
   console.log(user);
   
-
   return (
     <Routes>
       <Route path="/" element={<Navigate replace to="/Home" />} />
@@ -27,11 +27,7 @@ function App() {
       <Route path="/schedule" element={<VideoCall />} />
       <Route path="/contact" element={<ContactUs />} />
       <Route path="/yoga/:id" element={<YogaDetailPage />} />
-
-
-
-
-  
+      <Route path="/yoga-detection" element={<Yoga />} /> {/* Added this line */}
     </Routes>
   );
 }

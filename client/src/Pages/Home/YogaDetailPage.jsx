@@ -1,122 +1,28 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
     Heart, Award, List, Apple, ArrowLeft, Camera, Play, Square, 
     CheckCircle, AlertCircle, RefreshCw, Clock, Users, BookOpen,
-    Calendar, Star , ChevronRight,
+    Calendar, Star, ChevronRight,
 } from 'lucide-react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import yogaData from './yogaData.json';
 
 const YogaDetailPage = () => {
-    const [analysisResult, setAnalysisResult] = useState(null);
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
-    const [isCameraActive, setIsCameraActive] = useState(false);
-    const [cameraError, setCameraError] = useState(null);
-    const [stream, setStream] = useState(null);
     const [activeTab, setActiveTab] = useState('overview');
     const [notification, setNotification] = useState(null);
-    
     const { id } = useParams();
     const yoga = yogaData[id];
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
-    const tabsContainerRef = useRef(null);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        return () => stopCamera();
-    }, []);
+    const tabsContainerRef = React.useRef(null);
 
     const showNotification = (message, type = 'success') => {
         setNotification({ message, type });
         setTimeout(() => setNotification(null), 3000);
     };
 
-    const startCamera = async () => {
-        try {
-            setCameraError(null);
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-                video: { 
-                    facingMode: 'user',
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                } 
-            });
-            setStream(mediaStream);
-            if (videoRef.current) {
-                videoRef.current.srcObject = mediaStream;
-            }
-            setIsCameraActive(true);
-            showNotification('Camera started successfully');
-        } catch (error) {
-            console.error('Error accessing camera:', error);
-            setCameraError('Failed to access camera. Please ensure camera permissions are granted.');
-            showNotification('Failed to access camera', 'error');
-        }
+    const handlePoseDetection = () => {
+        navigate('/yoga-detection'); // Updated to match the route path
     };
-
-    const stopCamera = () => {
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            setStream(null);
-        }
-        if (videoRef.current) {
-            videoRef.current.srcObject = null;
-        }
-        setIsCameraActive(false);
-        showNotification('Camera stopped');
-    };
-
-    const captureFrame = () => {
-        if (videoRef.current && canvasRef.current) {
-            const canvas = canvasRef.current;
-            const video = videoRef.current;
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
-            return canvas.toDataURL('image/jpeg').split(',')[1];
-        }
-        return null;
-    };
-
-const analyzeFrame = async () => {
-    if (!isCameraActive) {
-        showNotification('Please start the camera first', 'error');
-        return;
-    }
-
-    setIsAnalyzing(true);
-
-    try {
-        const frame = captureFrame();
-
-        if (!frame) {
-            setAnalysisResult({ error: 'Failed to capture frame' });
-            showNotification('Failed to capture frame', 'error');
-            return;
-        }
-
-        const response = await axios.post('http://localhost:8080/api/pose/analyze-pose', { frame });
-        
-        if (response.status === 200 && response.data) {
-            setAnalysisResult(response.data);
-            showNotification('Pose analysis completed successfully');
-        } else {
-            setAnalysisResult({ error: 'Unexpected response from server' });
-            showNotification('Unexpected response from server', 'error');
-        }
-        
-    } catch (error) {
-        console.error('Error analyzing pose:', error);
-        setAnalysisResult({ error: 'Failed to analyze pose. Please try again.' });
-        showNotification('Failed to analyze pose', 'error');
-    } finally {
-        setIsAnalyzing(false);
-    }
-};
-
 
     const TabButton = ({ label, tabName, icon: Icon }) => (
         <button
@@ -172,36 +78,15 @@ const analyzeFrame = async () => {
                     </div>
 
                     {/* Navigation Tabs */}
-                    <style jsx>{`
-                            .hide-scrollbar::-webkit-scrollbar {
-                                display: none;
-                            }
-                            .hide-scrollbar {
-                                -ms-overflow-style: none;
-                                scrollbar-width: none;
-                            }
-                        `}</style>
-                    <div className="flex gap-4 p-6 bg-violet-50">
+                    <div className="flex gap-4 p-6 bg-violet-50" ref={tabsContainerRef}>
                         <TabButton label="Overview" tabName="overview" icon={List} />
                         <TabButton label="Practice" tabName="practice" icon={Camera} />
                         <TabButton label="Benefits" tabName="benefits" icon={Heart} />
                         <TabButton label="Food Guide" tabName="food" icon={Apple} />
                         <TabButton label="Schedule" tabName="schedule" icon={Calendar} />
-                            <TabButton label="Reviews" tabName="reviews" icon={Star} />
-                            <TabButton label="Resources" tabName="resources" icon={BookOpen} />
+                        <TabButton label="Reviews" tabName="reviews" icon={Star} />
+                        <TabButton label="Resources" tabName="resources" icon={BookOpen} />
                     </div>
-                    <button 
-                        onClick={() => {
-                            if (tabsContainerRef.current) {
-                                tabsContainerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
-                            }
-                        }}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 h-full px-2 
-                            bg-gradient-to-l from-violet-50 to-transparent z-10 flex items-center md:hidden"
-                        aria-label="Scroll right"
-                    >
-                        <ChevronRight className="w-6 h-6 text-violet-600" />
-                    </button>
 
                     {/* Tab Content */}
                     <div className="p-8">
@@ -224,81 +109,18 @@ const analyzeFrame = async () => {
                         )}
 
                         {activeTab === 'practice' && (
-                            <div className="space-y-6">
-                                <div className="flex justify-center">
-                                    <div className="relative w-full max-w-3xl rounded-2xl overflow-hidden bg-black">
-                                        <video
-                                            ref={videoRef}
-                                            className="w-full h-[600px] object-cover"
-                                            autoPlay
-                                            playsInline
-                                        />
-                                        <canvas ref={canvasRef} className="hidden" />
-                                        
-                                        {!isCameraActive && (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-violet-900/50">
-                                                <button
-                                                    onClick={startCamera}
-                                                    className="bg-violet-600 text-white px-8 py-4 rounded-lg flex items-center hover:bg-violet-700 transition-colors"
-                                                >
-                                                    <Camera className="mr-2" />
-                                                    Start Camera
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
+                            <div className="flex flex-col items-center justify-center space-y-6">
+                                <div className="text-center">
+                                    <h2 className="text-3xl font-bold text-violet-800 mb-4">Ready to Practice?</h2>
+                                    <p className="text-lg text-gray-600 mb-8">Start your yoga session with real-time pose detection</p>
+                                    <button
+                                        onClick={handlePoseDetection}
+                                        className="bg-violet-600 text-white px-8 py-4 rounded-lg flex items-center hover:bg-violet-700 transition-colors mx-auto"
+                                    >
+                                        <Camera className="mr-2" />
+                                        Go to Pose Detection
+                                    </button>
                                 </div>
-
-                                <div className="flex justify-center gap-4">
-                                    {isCameraActive && (
-                                        <>
-                                            <button
-                                                onClick={stopCamera}
-                                                className="bg-red-500 text-white px-6 py-3 rounded-lg flex items-center hover:bg-red-600 transition-colors"
-                                            >
-                                                <Square className="mr-2" />
-                                                Stop Camera
-                                            </button>
-                                            <button
-                                                onClick={analyzeFrame}
-                                                disabled={isAnalyzing}
-                                                className={`bg-violet-600 text-white px-6 py-3 rounded-lg flex items-center
-                                                    ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-violet-700'}
-                                                    transition-colors`}
-                                            >
-                                                {isAnalyzing ? (
-                                                    <RefreshCw className="mr-2 animate-spin" />
-                                                ) : (
-                                                    <Play className="mr-2" />
-                                                )}
-                                                {isAnalyzing ? 'Analyzing...' : 'Analyze Pose'}
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-
-                                {analysisResult && (
-                                    <div className="mt-8 p-6 bg-violet-50 rounded-xl">
-                                        <h3 className="text-2xl font-bold text-violet-800 mb-4">Analysis Result</h3>
-                                        {analysisResult.error ? (
-                                            <div className="text-red-500 flex items-center">
-                                                <AlertCircle className="mr-2" />
-                                                {analysisResult.error}
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-4">
-                                                <p className="text-lg">{analysisResult.poseAnalysis}</p>
-                                                {analysisResult.processedFrame && (
-                                                    <img
-                                                        src={`data:image/jpeg;base64,${analysisResult.processedFrame}`}
-                                                        alt="Analyzed Pose"
-                                                        className="rounded-lg shadow-lg max-w-full"
-                                                    />
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
                             </div>
                         )}
 

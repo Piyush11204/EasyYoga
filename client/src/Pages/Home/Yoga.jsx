@@ -232,7 +232,7 @@ function Yoga() {
             style={{
               position: 'absolute',
               left: 120,
-              top: 100,
+              top: 150,
               zIndex: 1
             }}
           >

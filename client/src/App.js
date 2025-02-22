@@ -9,7 +9,7 @@ import ClassesPage from "./Pages/Classes/ClassesPage";
 import VideoCall from "./Pages/VideoCall.jsx";
 import ContactUs from "./Pages/Contact/ContactUs";
 import YogaDetailPage from "./Pages/Home/YogaDetailPage.jsx";
-import Yoga from './Pages/Home/Yoga.js';
+import Yoga from './Pages/Home/Yoga.jsx';
 
 function App() {
   const user = localStorage.getItem("token");

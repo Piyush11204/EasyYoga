@@ -13,9 +13,6 @@ import { drawPoint, drawSegment } from '../../utils/helper';
 let skeletonColor = 'rgb(255,255,255)';
 let interval;
 let flag = false;
-let detector;
-let poseClassifier;
-let countAudio;
 
 function Yoga() {
   const webcamRef = useRef(null);
@@ -60,25 +57,9 @@ function Yoga() {
   }, [currentPose]);
 
   useEffect(() => {
-    const loadTensorFlow = async () => {
-      try {
-        await tf.ready();
-        setLoading(false);
-      } catch (error) {
-        console.error("Error loading TensorFlow:", error);
-      }
-    };
-    
-    loadTensorFlow();
-    
-    return () => {
-      // Clean up TensorFlow memory when component unmounts
-      try {
-        tf.disposeVariables();
-      } catch (error) {
-        console.error("Error disposing TensorFlow variables:", error);
-      }
-    };
+    tf.ready().then(() => {
+      setLoading(false);
+    });
   }, []);
 
   const CLASS_NO = {
@@ -128,22 +109,7 @@ function Yoga() {
     return embedding;
   };
 
-  // Using a safe tensor disposal pattern
-  const safeTensorOperation = (tensorFn) => {
-    try {
-      return tensorFn();
-    } catch (error) {
-      console.error("Tensor operation error:", error);
-      return null;
-    } finally {
-      // Clean up intermediate tensors
-      tf.engine().endScope();
-    }
-  };
-
-  const detectPose = async () => {
-    if (!detector || !poseClassifier) return;
-    
+  const detectPose = async (detector, poseClassifier, countAudio) => {
     try {
       if (
         typeof webcamRef.current !== "undefined" &&
@@ -152,10 +118,6 @@ function Yoga() {
       ) {
         let notDetected = 0;
         const video = webcamRef.current.video;
-        
-        // Start tensor scope to manage memory
-        tf.engine().startScope();
-        
         const pose = await detector.estimatePoses(video);
         const ctx = canvasRef.current.getContext('2d');
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -188,14 +150,10 @@ function Yoga() {
 
         if (notDetected > 4 || input.length === 0) {
           skeletonColor = 'rgb(255,255,255)';
-          tf.engine().endScope(); // End tensor scope if early return
           return;
         }
 
-        // Use the safe tensor operation pattern
-        const processedInput = safeTensorOperation(() => landmarks_to_embedding(input));
-        if (!processedInput) return;
-        
+        const processedInput = landmarks_to_embedding(input);
         const classification = poseClassifier.predict(processedInput);
 
         classification.array().then((data) => {
@@ -211,47 +169,34 @@ function Yoga() {
           } else {
             flag = false;
             skeletonColor = 'rgb(255,255,255)';
-            if (countAudio) {
-              countAudio.pause();
-              countAudio.currentTime = 0;
-            }
+            countAudio.pause();
+            countAudio.currentTime = 0;
           }
-          
-          // Dispose of the tensor after use
-          classification.dispose();
-        }).catch(err => {
-          console.error("Classification error:", err);
         });
       }
     } catch (err) {
       console.error("Pose detection error:", err);
-    } finally {
-      // Always end the tensor scope to prevent memory leaks
-      tf.engine().endScope();
     }
   };
 
   const runMovenet = async () => {
     try {
       await tf.ready();
-      tf.engine().startScope();
-      
-      // Create detector once and reuse
       const detectorConfig = { modelType: poseDetection.movenet.modelType.SINGLEPOSE_THUNDER };
-      detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
-      
-      // Load model once and reuse
-      poseClassifier = await tf.loadLayersModel('https://models.s3.jp-tok.cloud-object-storage.appdomain.cloud/model.json');
-      
-      // Create audio once and reuse
-      countAudio = new Audio(count);
+      const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
+      const poseClassifier = await tf.loadLayersModel('https://models.s3.jp-tok.cloud-object-storage.appdomain.cloud/model.json');
+      const countAudio = new Audio(count);
       countAudio.loop = true;
       
-      tf.engine().endScope();
-      
       interval = setInterval(() => {
-        detectPose();
+        detectPose(detector, poseClassifier, countAudio);
       }, 100);
+
+      return () => {
+        clearInterval(interval);
+        countAudio.pause();
+        countAudio.currentTime = 0;
+      };
     } catch (error) {
       console.error("Error loading model:", error);
     }
@@ -264,61 +209,12 @@ function Yoga() {
 
   const stopPose = () => {
     setIsStartPose(false);
-    if (interval) {
-      clearInterval(interval);
-      interval = null;
-    }
-    
-    // Clean up resources
-    if (countAudio) {
-      countAudio.pause();
-      countAudio.currentTime = 0;
-    }
-    
-    // Clean up TensorFlow resources
-    if (poseClassifier) {
-      try {
-        poseClassifier.dispose();
-      } catch (error) {
-        console.error("Error disposing classifier:", error);
-      }
-    }
-    
-    detector = null;
-    poseClassifier = null;
+    clearInterval(interval);
   };
 
-  // Clean up on component unmount
   useEffect(() => {
     return () => {
-      if (interval) {
-        clearInterval(interval);
-        interval = null;
-      }
-      
-      if (countAudio) {
-        countAudio.pause();
-        countAudio = null;
-      }
-      
-      // Clean up TensorFlow resources
-      if (poseClassifier) {
-        try {
-          poseClassifier.dispose();
-          detector = null;
-          poseClassifier = null;
-        } catch (error) {
-          console.error("Error disposing resources on unmount:", error);
-        }
-      }
-      
-      // Clean up TensorFlow memory
-      try {
-        tf.engine().endScope();
-        tf.engine().disposeVariables();
-      } catch (error) {
-        console.error("Error cleaning up TensorFlow memory:", error);
-      }
+      clearInterval(interval);
     };
   }, []);
 
@@ -377,7 +273,7 @@ function Yoga() {
         </div>
 
         {/* Main Content */}
-        <div className="w-full max-w-7xl mx-auto  pt-20 flex flex-col md:flex-row md:space-x-4 mb-4">
+        <div className="w-full max-w-7xl mx-auto px-4 pt-20 flex flex-col md:flex-row md:space-x-4 mb-4">
           {/* Camera Feed (Main) */}
           <div className="w-full md:w-3/4 relative mb-4 md:mb-0">
             <div className="bg-black bg-opacity-40 backdrop-filter backdrop-blur-sm rounded-2xl overflow-hidden shadow-2xl">
@@ -434,7 +330,8 @@ function Yoga() {
                 </div>
               </div>
               
-             
+              {/* Instructions */}
+            
             </div>
           </div>
         </div>
@@ -445,14 +342,14 @@ function Yoga() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-indigo-900 via-purple-800 to-violet-900 text-white">
       {/* Header */}
-      <header className="w-full py-6 pt-32 bg-black bg-opacity-30 backdrop-filter backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4">
+      <header className="w-full py-6 pt-28 bg-black bg-opacity-30 backdrop-filter backdrop-blur-md">
+        <div className="max-w-7xl mx-auto ">
           <h1 className="text-4xl font-bold text-center">{currentPose} Yoga Practice</h1>
           <p className="text-center text-purple-200 mt-2">Master your yoga form with AI-powered feedback and guidance</p>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto  py-8">
+      <div className="max-w-7xl mx-auto py-8">
         {/* Hero Section */}
         <div className="w-full bg-black bg-opacity-30 backdrop-filter backdrop-blur-md rounded-2xl overflow-hidden mb-8 shadow-2xl">
           <div className="flex flex-col lg:flex-row">
@@ -550,13 +447,7 @@ function Yoga() {
       </div>
       
       {/* Footer */}
-      <footer className="bg-black bg-opacity-50 py-6">
-        <div className="max-w-7xl mx-auto px-4">
-          <p className="text-center text-purple-200 text-sm">
-            © {new Date().getFullYear()} AI Yoga Assistant. All rights reserved. | Made with 💜 for better wellness.
-          </p>
-        </div>
-      </footer>
+     
     </div>
   );
 }

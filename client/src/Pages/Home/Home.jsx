@@ -1,6 +1,9 @@
 import React from 'react';
 import { ArrowBigDown, Star, Users, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import 
+{poseImages}
+from "../../utils/pose_images/index.js";
 
 // Yoga poses data structure
 const yogaPoses = [
@@ -10,7 +13,7 @@ const yogaPoses = [
     description: 'A balancing pose that strengthens your legs and core while improving your focus and concentration.',
     benefits: ['Improves balance', 'Strengthens legs and core', 'Enhances focus'],
     difficulty: 'Beginner',
-    image: '/api/placeholder/400/300'
+    image: poseImages.Tree
   },
   {
     id: 'chair',
@@ -18,7 +21,7 @@ const yogaPoses = [
     description: 'A powerful standing pose that strengthens the lower body while improving posture and stability.',
     benefits: ['Strengthens thighs and ankles', 'Tones abdominals', 'Improves posture'],
     difficulty: 'Beginner',
-    image: '/api/placeholder/400/300'
+    image: poseImages.Chair
   },
   {
     id: 'cobra',
@@ -26,7 +29,7 @@ const yogaPoses = [
     description: 'A gentle backbend that opens the chest and strengthens the spine while stretching the front of the body.',
     benefits: ['Strengthens spine', 'Opens chest and lungs', 'Improves posture'],
     difficulty: 'Beginner',
-    image: '/api/placeholder/400/300'
+    image: poseImages.Cobra
   },
   {
     id: 'warrior',
@@ -34,7 +37,7 @@ const yogaPoses = [
     description: 'A strong standing pose that builds strength and stability while improving focus and circulation.',
     benefits: ['Strengthens legs and core', 'Opens hips and chest', 'Improves stamina'],
     difficulty: 'Intermediate',
-    image: '/api/placeholder/400/300'
+    image: poseImages.Warrior
   },
   {
     id: 'dog',
@@ -42,7 +45,7 @@ const yogaPoses = [
     description: 'Also known as Downward Dog, this pose stretches and strengthens the entire body while calming the mind.',
     benefits: ['Stretches hamstrings and calves', 'Strengthens arms and shoulders', 'Energizes the body'],
     difficulty: 'Beginner',
-    image: '/api/placeholder/400/300'
+    image: poseImages.Dog
   },
   {
     id: 'shoulderstand',
@@ -50,7 +53,7 @@ const yogaPoses = [
     description: 'An inverted pose that calms the nervous system while strengthening the upper body and improving circulation.',
     benefits: ['Improves circulation', 'Calms nervous system', 'Strengthens shoulders and neck'],
     difficulty: 'Advanced',
-    image: '/api/placeholder/400/300'
+    image: poseImages.Shoulderstand
   }
 ];
 
@@ -119,38 +122,44 @@ const Home = () => {
             {yogaPoses.map((pose) => {
               const colors = getDifficultyColors(pose.difficulty);
               return (
-                <div key={pose.id} className={`rounded-lg shadow-lg overflow-hidden border-l-4 ${colors.border} hover:shadow-xl transition-transform hover:scale-105`}>
-                  <img src={pose.image} alt={pose.name} className="w-full h-48 object-cover" />
-                  <div className="p-6 bg-white">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-xl font-semibold">{pose.name} Pose</h3>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${colors.badge}`}>
-                        {pose.difficulty}
-                      </span>
+                <div key={pose.id} className={`rounded-lg shadow-lg overflow-hidden border-l-4 ${colors.border} hover:shadow-xl transition-transform hover:scale-105 flex flex-col h-full`}>
+                <div className="flex-shrink-0">
+                  <img 
+                    src={pose.image} 
+                    alt={pose.name} 
+                    className="h-72 w-full object-fit" // Increased height to h-64
+                  />
+                </div>
+                <div className="p-6 bg-white flex-grow flex flex-col">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold">{pose.name} Pose</h3>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${colors.badge}`}>
+                      {pose.difficulty}
+                    </span>
+                  </div>
+                  <p className="text-gray-600 mb-4">{pose.description}</p>
+                  <div className="mb-4">
+                    <h4 className="font-medium text-gray-700 mb-2">Benefits:</h4>
+                    <ul className="list-disc pl-5 text-gray-600">
+                      {pose.benefits.map((benefit, i) => (
+                        <li key={i}>{benefit}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="flex items-center justify-between mt-auto">
+                    <div className="flex items-center">
+                      <Star className="text-yellow-400 w-4 h-4 mr-1" />
+                      <span className="text-sm">4.8 (120 reviews)</span>
                     </div>
-                    <p className="text-gray-600 mb-4">{pose.description}</p>
-                    <div className="mb-4">
-                      <h4 className="font-medium text-gray-700 mb-2">Benefits:</h4>
-                      <ul className="list-disc pl-5 text-gray-600">
-                        {pose.benefits.map((benefit, i) => (
-                          <li key={i}>{benefit}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="flex items-center justify-between mt-4">
-                      <div className="flex items-center">
-                        <Star className="text-yellow-400 w-4 h-4 mr-1" />
-                        <span className="text-sm">4.8 (120 reviews)</span>
-                      </div>
-                      <button 
-                        onClick={() => handleLearnMore(pose.name)}
-                        className="text-blue-600 hover:text-blue-800 font-medium"
-                      >
-                        Learn More
-                      </button>
-                    </div>
+                    <button 
+                      onClick={() => handleLearnMore(pose.name)}
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      Learn More
+                    </button>
                   </div>
                 </div>
+              </div>
               );
             })}
           </div>

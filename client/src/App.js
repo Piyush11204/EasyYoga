@@ -28,7 +28,7 @@ function App() {
       <Route path="/schedule" element={<VideoCall />} />
       <Route path="/contact" element={<ContactUs />} />
       <Route path="/yoga/:id" element={<YogaDetailPage />} />
-      <Route path="/yoga-detection" element={<Yoga />} /> {/* Added this line */}
+      <Route path="/yoga" element={<Yoga />} /> 
     </Routes>
   );
 }

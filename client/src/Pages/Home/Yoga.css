@@ -1,257 +1,184 @@
-/* Base layout with Material Design background */
-.yoga-container {
-    background-color: #f8f9fa;
-    min-width: 100vw;
-    min-height: 100vh;
-    padding: 24px;
-    font-family: 'Google Sans', 'Roboto', sans-serif;
+/* Yoga App - Purple and White Theme */
+
+:root {
+  --color-primary: #6a1b9a;
+  --color-secondary: #9c27b0;
+  --color-accent: #ce93d8;
+  --color-background: #f3e5f5;
+  --color-text: #3e2723;
+  --color-white: #ffffff;
+  --color-success: #43a047;
+  --color-warning: #fb8c00;
+  --color-error: #e53935;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --shadow-md: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  --shadow-lg: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  --border-radius: 8px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Global Styles */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  transition: var(--transition);
+}
+
+/* Loading Screen */
+.yoga-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: var(--color-background);
+  text-align: center;
+  padding: 20px;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid var(--color-accent);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  /* Modern Material button */
-  .secondary-btn {
-    background-color: #1a73e8;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 24px;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.25px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3),
-                0 1px 3px 1px rgba(60, 64, 67, 0.15);
-    position: fixed;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .secondary-btn:hover {
-    background-color: #1557b0;
-    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3),
-                0 4px 8px 3px rgba(60, 64, 67, 0.15);
-  }
-  
-  .secondary-btn:active {
-    background-color: #174ea6;
-  }
-  
-  /* Countdown styling */
-  .starting-countdown {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border-radius: 28px;
-    padding: 32px;
-    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3),
-                0 4px 8px 3px rgba(60, 64, 67, 0.15);
-  }
-  
-  .starting-countdown h1 {
-    color: #1f1f1f;
-    font-size: 48px;
-    font-weight: 400;
-    margin: 0;
-  }
-  
-  /* Performance metrics cards */
-  .performance-container {
-    position: fixed;
-    left: 24px;
-    top: 24px;
-    display: flex;
-    gap: 16px;
-    z-index: 10;
-  }
-  
-  .pose-performance {
-    background-color: white;
-    border-radius: 16px;
-    padding: 16px 24px;
-    min-width: 160px;
-    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3),
-                0 1px 3px 1px rgba(60, 64, 67, 0.15);
-    transition: transform 0.2s ease;
-  }
-  
-  .pose-performance:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3),
-                0 4px 8px 3px rgba(60, 64, 67, 0.15);
-  }
-  
-  .pose-performance h4 {
-    color: #1f1f1f;
-    font-size: 14px;
-    font-weight: 500;
-    margin: 0;
-    margin-bottom: 4px;
-  }
-  
-  .pose-performance p {
-    color: #5f6368;
-    font-size: 24px;
-    font-weight: 400;
-    margin: 0;
-  }
-  
-  /* Webcam container */
-  .webcam-container {
-    position: relative;
-    width: fit-content;
-    margin: 80px auto;
-    border-radius: 28px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3),
-                0 4px 8px 3px rgba(60, 64, 67, 0.15);
-  }
-  
-  #webcam, #my-canvas {
-    transform: rotateY(180deg);
-    border-radius: 28px;
-  }
-  
-  /* Pose image */
-  .pose-img {
-    position: fixed;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 320px;
-    border-radius: 28px;
-    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3),
-                0 4px 8px 3px rgba(60, 64, 67, 0.15);
-  }
-  
-  /* Dropdown styling */
-  .pose-dropdown {
-    background-color: white;
-    border-radius: 8px;
-    padding: 8px 16px;
-    width: 200px;
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3),
-                0 1px 3px 1px rgba(60, 64, 67, 0.15);
-  }
-  
-  .pose-dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border-radius: 8px;
-    margin-top: 4px;
-    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3),
-                0 4px 8px 3px rgba(60, 64, 67, 0.15);
-    overflow: hidden;
-  }
-  
-  .pose-dropdown-item {
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .pose-dropdown-item:hover {
-    background-color: #f1f3f4;
-  }
-  
-  /* Instructions section */
-  .instructions-container {
-    background-color: white;
-    border-radius: 28px;
-    padding: 24px;
-    margin: 24px 0;
-    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3),
-                0 1px 3px 1px rgba(60, 64, 67, 0.15);
-  }
-  
-  .instructions-container h2 {
-    color: #1f1f1f;
-    font-size: 20px;
-    font-weight: 500;
-    margin: 0 0 16px 0;
-  }
-  
-  .instructions-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .instructions-list li {
-    color: #5f6368;
-    font-size: 14px;
-    line-height: 20px;
-    padding: 8px 0;
-    border-bottom: 1px solid #f1f3f4;
-  }
-  
-  .instructions-list li:last-child {
-    border-bottom: none;
-  }
-  
-  /* Loading state */
-  .loading-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .loading-spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid #e8eaed;
-    border-top: 4px solid #1a73e8;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  /* Responsive design */
-  @media (max-width: 1200px) {
-    .pose-img {
-      width: 240px;
-    }
-    
-    .performance-container {
-      flex-direction: column;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .yoga-container {
-      padding: 16px;
-    }
-    
-    .pose-img {
-      display: none;
-    }
-    
-    #webcam, #my-canvas {
-      width: 100% !important;
-      height: auto !important;
-    }
-    
-    .performance-container {
-      position: static;
-      margin-bottom: 16px;
-    }
-  }
+}
+
+/* Main Container Styles */
+.yoga-app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header Styles */
+.yoga-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+}
+
+.yoga-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.yoga-header p {
+  margin: 10px 0 0;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Pose Cards Grid */
+.pose-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.pose-card {
+  background-color: var(--color-white);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.pose-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.pose-card-image {
+  height: 230px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pose-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.pose-card:hover .pose-card-image img {
+  transform: scale(1.05);
+}
+
+.pose-card-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.pose-card-content h3 {
+  margin: 0 0 10px;
+  color: var(--color-primary);
+  font-size: 1.4rem;
+}
+
+.pose-difficulty {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  align-self: flex-start;
+}
+
+.pose-benefits {
+  font-weight: 500;
+  margin: 0 0 10px;
+  color: var(--color-secondary);
+}
+
+.pose-description {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 20px;
+  flex-grow: 1;
+}
+
+.practice-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  margin-top: auto;
+  align-self: center;
+  text-align: center;}

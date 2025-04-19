@@ -31,13 +31,13 @@ app.use(corsMiddleware);
 
 // Improved body parsing with higher limits and proper configuration
 app.use(bodyParser.json({
-  limit: '500mb',
+  limit: '50mb',
   verify: (req, res, buf) => {
     req.rawBody = buf.toString();
   }
 }));
 app.use(bodyParser.urlencoded({ 
-  limit: '500mb', 
+  limit: '50mb', 
   extended: true 
 }));
 
